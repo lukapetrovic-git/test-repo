@@ -1,0 +1,156 @@
+NAME: goodly-guppy
+LAST DEPLOYED: Sun Oct  5 16:54:14 2025
+NAMESPACE: billtest
+STATUS: pending-install
+REVISION: 1
+TEST SUITE: None
+USER-SUPPLIED VALUES:
+{}
+
+COMPUTED VALUES:
+additionalLabels:
+  app: redis
+affinity: {}
+fullnameOverride: ""
+image:
+  pullPolicy: IfNotPresent
+  repository: redis
+  tag: 8.2.2
+livenessProbe:
+  tcpSocket:
+    port: 6379
+nameOverride: ""
+podAnnotations: {}
+podSecurityContext:
+  runAsNonRoot: true
+  seccompProfile:
+    type: RuntimeDefault
+readinessProbe:
+  tcpSocket:
+    port: 6379
+replicaCount: 1
+resources:
+  limits:
+    memory: 128Mi
+  requests:
+    cpu: 100m
+    memory: 128Mi
+securityContext:
+  allowPrivilegeEscalation: false
+  capabilities:
+    drop:
+    - ALL
+  privileged: false
+  readOnlyRootFilesystem: true
+  runAsGroup: 999
+  runAsUser: 999
+service:
+  port: 6379
+  protocol: TCP
+  targetPort: 6379
+  type: ClusterIP
+volumeMounts:
+- mountPath: /data
+  name: redis-data
+volumes:
+- emptyDir: {}
+  name: redis-data
+
+HOOKS:
+MANIFEST:
+---
+# Source: redis/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: goodly-guppy-redis
+  labels:
+    helm.sh/chart: redis-0.1.0
+    app.kubernetes.io/name: redis
+    app.kubernetes.io/instance: goodly-guppy
+    app.kubernetes.io/version: "8.2.2"
+    app.kubernetes.io/managed-by: Helm
+    app: "redis"
+spec:
+  type: ClusterIP
+  ports:
+    - port: 6379
+      targetPort: 6379
+      protocol: TCP
+  selector:
+    app.kubernetes.io/name: redis
+    app.kubernetes.io/instance: goodly-guppy
+---
+# Source: redis/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    helm.sh/chart: redis-0.1.0
+    app.kubernetes.io/name: redis
+    app.kubernetes.io/instance: goodly-guppy
+    app.kubernetes.io/version: "8.2.2"
+    app.kubernetes.io/managed-by: Helm
+    app: "redis"
+  name: goodly-guppy-redis
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: redis
+      app.kubernetes.io/instance: goodly-guppy
+  template:
+    metadata:
+      labels:
+        helm.sh/chart: redis-0.1.0
+        app.kubernetes.io/name: redis
+        app.kubernetes.io/instance: goodly-guppy
+        app.kubernetes.io/version: "8.2.2"
+        app.kubernetes.io/managed-by: Helm
+        app: "redis"
+    spec:
+      containers:
+        - name: redis
+          image: "redis:8.2.2"
+          imagePullPolicy: IfNotPresent
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - ALL
+            privileged: false
+            readOnlyRootFilesystem: true
+            runAsGroup: 999
+            runAsUser: 999
+          ports:
+            - containerPort: 6379
+              protocol: TCP
+          livenessProbe:
+            tcpSocket:
+              port: 6379
+          readinessProbe:
+            tcpSocket:
+              port: 6379
+          resources:
+            limits:
+              memory: 128Mi
+            requests:
+              cpu: 100m
+              memory: 128Mi
+          volumeMounts:
+            - mountPath: /data
+              name: redis-data
+      volumes:
+        - emptyDir: {}
+          name: redis-data
+      securityContext:
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
+
+NOTES:
+1. Get the ip and port by:
+  export POD_NAME=$(kubectl get pods --namespace billtest -l "app.kubernetes.io/name=redis,app.kubernetes.io/instance=goodly-guppy" -o jsonpath="{.items[0].metadata.name}")
+  export CONTAINER_PORT=$(kubectl get pod --namespace billtest $POD_NAME -o jsonpath="{.spec.containers[0].ports[0].containerPort}")
+  kubectl --namespace billtest port-forward $POD_NAME 6379:$CONTAINER_PORT
+  echo "Redis should be available at 127.0.0.1:6379"
