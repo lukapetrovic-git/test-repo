@@ -5,12 +5,8 @@ fullnameOverride: ""
 # ReplicaSet pod count
 replicaCount: 1
 
-# Deployment labels
-deploymentLabels:
-  app: vote
-
-# Pod labels
-podLabels:
+# Additional labels to add to all objects
+additionalLabels:
   app: vote
 
 image:
