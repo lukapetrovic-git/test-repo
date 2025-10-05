@@ -67,7 +67,7 @@ ingress:
   className: "nginx"
   annotations: {}
   hosts:
-    - host: voteapp.example.local
+    - host: vote.example.local
       paths:
         - path: /
           pathType: Prefix
