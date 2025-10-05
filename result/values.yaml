@@ -7,11 +7,11 @@ replicaCount: 1
 
 # Deployment labels
 deploymentLabels:
-  app: vote
+  app: result
 
 # Pod labels
 podLabels:
-  app: vote
+  app: result
 
 image:
   # Application image repository
@@ -67,7 +67,7 @@ ingress:
   className: "nginx"
   annotations: {}
   hosts:
-    - host: voteapp.example.local
+    - host: result.example.local
       paths:
         - path: /
           pathType: Prefix
