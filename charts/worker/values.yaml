@@ -1,0 +1,50 @@
+# This is to override the chart name.
+nameOverride: ""
+fullnameOverride: ""
+
+# ReplicaSet pod count
+replicaCount: 1
+
+# Deployment labels
+deploymentLabels:
+  app: worker
+
+# Pod labels
+podLabels:
+  app: worker
+
+image:
+  # Application image repository
+  repository: dockersamples/examplevotingapp_worker
+  # This sets the pull policy for images.
+  pullPolicy: IfNotPresent
+  # Application image tag
+  tag: latest
+
+# Pod annotations
+podAnnotations: {}
+
+# Pod security context
+podSecurityContext: {}
+  # runAsNonRoot: true
+  # seccompProfile:
+  #   type: "RuntimeDefault"
+
+# Container security context
+securityContext: {}
+  # privileged: false
+  # allowPrivilegeEscalation: false
+  # capabilities:
+  #   drop: ["ALL"]
+  # readOnlyRootFilesystem: true
+
+resources:
+  limits:
+    # cpu: 100m
+    memory: 128Mi
+  requests:
+    cpu: 100m
+    memory: 128Mi
+
+# Set affinity (poAffinity, podAntiAffinity, nodeAffinity)
+affinity: {}
