@@ -1,53 +1,58 @@
 # This is to override the chart name.
-nameOverride: "redis"
-fullnameOverride: "redis"
+nameOverride: "db"
+fullnameOverride: "db"
 
 # ReplicaSet pod count
 replicaCount: 1
 
 # Additional labels to add to all objects
 additionalLabels:
-  app: redis
+  app: db
 
 image:
   # Application image repository
-  repository: redis
+  repository: postgres
   # This sets the pull policy for images.
   pullPolicy: IfNotPresent
   # Application image tag
-  tag: 8.2.2
+  tag: 15-alpine
+
+# Container environment variables
+environment:
+  - name: POSTGRES_USER
+    value: postgres
+  - name: POSTGRES_PASSWORD
+    value: postgres
 
 # Pod annotations
 podAnnotations: {}
 
 # Pod security context
-podSecurityContext:
-  runAsNonRoot: true
-  seccompProfile:
-    type: "RuntimeDefault"
+podSecurityContext: {}
+  # runAsNonRoot: true
+  # seccompProfile:
+  #   type: "RuntimeDefault"
 
 # Container security context
-securityContext:
-  privileged: false
-  allowPrivilegeEscalation: false
-  capabilities:
-    drop: ["ALL"]
-  readOnlyRootFilesystem: true
-  runAsUser: 999
-  runAsGroup: 999
+securityContext: {}
+  # privileged: false
+  # allowPrivilegeEscalation: false
+  # capabilities:
+  #   drop: ["ALL"]
+  # readOnlyRootFilesystem: true
 
 # Liveness and readiness probes
 livenessProbe:
   tcpSocket:
-    port: 6379
+    port: 5432
 readinessProbe:
   tcpSocket:
-    port: 6379
+    port: 5432
 
 # Container resources
 resources:
   limits:
-    # cpu: 100m
+    cpu: 100m
     memory: 128Mi
   requests:
     cpu: 100m
@@ -61,18 +66,18 @@ service:
   # Service type
   type: ClusterIP
   # Service port
-  port: 6379
+  port: 5432
   # Container port
-  targetPort: 6379
+  targetPort: 5432
   # Container port
   protocol: TCP
 
 # Additional Volumes
 volumes:
-  - name: redis-data
+  - name: db-data
     emptyDir: {}
 
 # Additional volume mounts.
 volumeMounts:
-  - mountPath: /data
-    name: redis-data
+  - mountPath: /var/lib/postgresql/data
+    name: db-data
