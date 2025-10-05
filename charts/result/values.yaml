@@ -38,6 +38,16 @@ securityContext: {}
   #   drop: ["ALL"]
   # readOnlyRootFilesystem: true
 
+# Liveness and readiness probes
+livenessProbe:
+  httpGet:
+    path: /
+    port: 80
+readinessProbe:
+  httpGet:
+    path: /
+    port: 80
+
 # Container resources
 resources:
   limits:
