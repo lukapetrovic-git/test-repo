@@ -15,7 +15,7 @@ podLabels:
 
 image:
   # Application image repository
-  repository: dockersamples/examplevotingapp_vote
+  repository: dockersamples/examplevotingapp_result
   # This sets the pull policy for images.
   pullPolicy: IfNotPresent
   # Application image tag
